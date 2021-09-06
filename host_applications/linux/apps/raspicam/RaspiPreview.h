@@ -56,6 +56,7 @@ typedef struct
    MMAL_RECT_T previewWindow;             /// Destination rectangle for the preview window.
    MMAL_COMPONENT_T *preview_component;   /// Pointer to the created preview display component
    int display_num;                       /// Display number to use.
+   int layer;                             /// Layer number to use
 } RASPIPREVIEW_PARAMETERS;
 
 MMAL_STATUS_T raspipreview_create(RASPIPREVIEW_PARAMETERS *state);

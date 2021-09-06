@@ -51,6 +51,7 @@ enum
    CommandOpacity,
    CommandDisablePreview,
    CommandDisplayNum,
+   CommandLayer
 };
 
 static COMMAND_LIST cmdline_commands[] =
@@ -60,6 +61,7 @@ static COMMAND_LIST cmdline_commands[] =
    { CommandOpacity,       "-opacity",    "op", "Preview window opacity (0-255)", 1},
    { CommandDisablePreview,"-nopreview",  "n",  "Do not display a preview window", 0},
    { CommandDisplayNum,    "-dispnum",    "dn", "Display on which to display the preview window (dispmanx/tvservice numbering)", 1},
+   { CommandLayer,         "-layer",      "la", "Layer on which to display the preview window. Default 2", 1},
 };
 
 static int cmdline_commands_size = sizeof(cmdline_commands) / sizeof(cmdline_commands[0]);
@@ -114,7 +116,7 @@ MMAL_STATUS_T raspipreview_create(RASPIPREVIEW_PARAMETERS *state)
       param.hdr.size = sizeof(MMAL_DISPLAYREGION_T);
 
       param.set = MMAL_DISPLAY_SET_LAYER;
-      param.layer = PREVIEW_LAYER;
+      param.layer = state->layer;
 
       param.set |= MMAL_DISPLAY_SET_ALPHA;
       param.alpha = state->opacity;
@@ -200,6 +202,7 @@ void raspipreview_set_defaults(RASPIPREVIEW_PARAMETERS *state)
    state->previewWindow.height = 768;
    state->preview_component = NULL;
    state->display_num = -1;
+   state->layer = PREVIEW_LAYER;
 }
 
 /**
@@ -282,6 +285,13 @@ int raspipreview_parse_cmdline(RASPIPREVIEW_PARAMETERS *params, const char *arg1
    case CommandDisplayNum:
       if (sscanf(arg2, "%d", &params->display_num) != 1)
          params->display_num = -1;
+      else
+         used = 2;
+      break;
+
+   case CommandLayer:
+      if (sscanf(arg2, "%d", &params->layer) != 1)
+         params->layer = PREVIEW_LAYER;
       else
          used = 2;
       break;
